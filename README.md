@@ -14,7 +14,31 @@ An intelligent, real-time drowsiness detection system that uses computer vision 
 > *(Add a GIF or screenshot of your Python camera feed and hardware working here. You can place the image in your `assets/` folder and link it like this: `![Demo](assets/demo.gif)`)*
 
 ---
+## 📖 About the Project
 
+Driver fatigue is a leading cause of severe road accidents. This project aims to prevent micro-sleeps at the wheel by combining real-time computer vision with an active IoT hardware response. Unlike standard software-only alerts that just play a sound on a computer, this system bridges the gap into the physical world using an ESP32 microcontroller to trigger tangible environmental changes (spinning a motor, flashing lights, and sounding an active alarm).
+
+### 🧠 How It Works (System Architecture)
+
+The system operates on a continuous software-to-hardware loop:
+
+**1. Facial Landmark Detection (The Software)**
+The system captures live video via a webcam and processes it using **MediaPipe Face Mesh**. This lightweight machine learning model maps 468 3D landmarks across the driver's face in real time. We extract 12 specific coordinates—6 for the left eye and 6 for the right eye.
+
+**2. The Eye Aspect Ratio (EAR) Math**
+Using the extracted coordinates, the Python script calculates the Euclidean distance between the vertical eye landmarks and horizontal eye landmarks to compute the Eye Aspect Ratio (EAR).
+* When a person's eyes are open, the EAR remains relatively constant.
+* When a person blinks or closes their eyes, the EAR drops rapidly toward zero.
+
+**3. State Machine & Sleep Logic**
+Human blinks are incredibly fast (usually 3–5 frames). To prevent false alarms from normal blinking, the system uses a frame counter. 
+* If the EAR drops below the threshold of `0.21`, the counter starts. 
+* If the eyes remain closed for `20` consecutive frames, the driver is classified as **"SLEEPING"**.
+
+**4. Serial Communication & Hardware Actuation (The Hardware)**
+Once sleep is detected, the Python script instantly opens a serial communication line to the ESP32 and sends a `1` byte. 
+* **The Alarm Cycle:** The ESP32 receives the signal and activates an L298N motor driver, spinning a DC motor (which could be attached to a steering wheel vibrator or seat mechanism). Simultaneously, it triggers a 2-second rapid-fire sequence of high-pitch buzzer beeps and LED flashes. 
+* **The Wake State:** Once the driver opens their eyes, the software resets, sending a `0` byte. The ESP32 immediately cuts power to the buzzer and applies an electronic "hard brake" to the motor to stop it from spinning instantly.
 ## 🛠️ Hardware Requirements
 
 *   **Microcontroller:** ESP32 Development Board
