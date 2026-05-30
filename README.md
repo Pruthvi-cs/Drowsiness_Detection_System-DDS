@@ -68,3 +68,34 @@ An intelligent, real-time drowsiness detection system that uses computer vision 
 ```bash
    git clone [https://github.com/pruthvi-cs/Drowsiness-Detection-System.git](https://github.com/pruthvi-cs/Drowsiness-Detection-System.git)
    cd Drowsiness-Detection-System
+Install the required Python libraries:
+```
+```bash
+pip install -r requirements.txt
+Open python_code/drowsiness_detector.py and update the SERIAL_PORT variable to match your ESP32's COM port (e.g., COM5 or /dev/ttyUSB0):
+```
+Python
+SERIAL_PORT = 'COM5' 
+🕹️ Usage
+Ensure the ESP32 is plugged in and the battery pack is connected to the L298N.
+
+Run the Python script:
+
+Bash
+python python_code/drowsiness_detector.py
+Position yourself in front of the webcam. The system will track your eyes.
+
+Close your eyes for more than 20 consecutive frames. The system will display a "SLEEPING!" alert on the screen and trigger the ESP32 hardware alarm (Motor spins, Buzzer beeps, LED flashes for 2 seconds).
+
+📁 Repository Structure
+Plaintext
+```bash
+Drowsiness-Detection-System/
+├── esp32_controller/
+│   └── esp32_controller.ino    # Arduino code for hardware control
+├── python_code/
+│   └── drowsiness_detector.py  # Computer Vision & Serial script
+├── assets/                     # Images, diagrams, and demos
+├── requirements.txt            # Python dependencies
+└── README.md                   # Project documentation
+```
